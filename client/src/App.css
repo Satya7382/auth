@@ -1,0 +1,16 @@
+
+button {
+    border: 1px solid black;
+    margin: 5px;
+    padding: 5px;
+}
+
+button:hover {
+    background-color: lightgray;
+}
+
+input {
+    border: 1px solid black;
+    padding: 5px;
+    margin: 5px;
+}
