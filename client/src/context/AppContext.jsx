@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, use } from 'react';
+import React, { useState, useEffect, createContext } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
@@ -12,20 +12,24 @@ export const AppContextProvider = (props) => {
   const [userData, setUserData] = useState(null);
 
   const getAuthState = async () => {
-  try {
-    const { data } = await axios.get(
-      `${backend_Url}/api/auth/is-auth`,
-    );
+    try {
+      const { data } = await axios.get(
+        `${backend_Url}/api/auth/is-auth`,
+        { withCredentials: true }
+      );
 
-    if (data.success) {
-      setIsLoggedIn(true);
-      await getUserData();
+      if (data.success) {
+        setIsLoggedIn(true);
+        await getUserData();
+      } else {
+        setIsLoggedIn(false);
+        setUserData(null);
+      }
+    } catch (error) {
+      setIsLoggedIn(false);
+      setUserData(null);
     }
-  } catch (error) {
-    setIsLoggedIn(false);
-    setUserData(null);
-  }
-};
+  };
   const getUserData = async () => {
     try {
       const { data } = await axios.get(
@@ -35,7 +39,6 @@ export const AppContextProvider = (props) => {
 
       if (data.success) {
         setUserData(data.userData);
-        console.log('User data fetched successfully');
       }
     } catch (error) {
       console.log(error.response?.data?.message || error.message);

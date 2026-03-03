@@ -39,6 +39,10 @@ const EmailVerify = () => {
     e.preventDefault();
     try {
       const otp = inputsRef.current.map((input) => input.value).join('');
+      if (otp.split('').some((digit) => digit === '')) {
+        toast.error('Please enter complete OTP');
+        return;
+      }
       const { data } = await axios.post(
         `${backend_Url}/api/auth/verify-account`,
         { otp },
@@ -57,10 +61,19 @@ const EmailVerify = () => {
   };
 
   useEffect(() => {
-      if (isLoggedIn && userData && userData.isAccountVerified) {
-        navigate('/');
-      }
-  }, [isLoggedIn,userData]);
+    inputsRef.current[0]?.focus();
+  }, []);
+  useEffect(() => {
+    if (!isLoggedIn) {
+      navigate('/login');
+    }
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (isLoggedIn && userData && userData.isAccountVerified) {
+      navigate('/');
+    }
+  }, [isLoggedIn, userData]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-500 to-purple-500 px-6 sm:px-0">
