@@ -142,15 +142,16 @@ export const isAuthenticated = async (req, res) => {
 }
 
 export const sendResetOtp = async (req, res) => {
-    const email = req.body;
+    const { email } = req.body; 
     if(!email) {
-        return res.status(400).json({ success : false , message: 'Email is required' });
+        return res.status(400).json({ success: false, message: 'Email is required' });
     }
     try {
-        const user = await userModel.findOne(email);
+        const user = await userModel.findOne({ email });  
         if(!user) {
-            return res.status(400).json({ success : false , message: 'User not found' });
+            return res.status(400).json({ success: false, message: 'User not found' });
         }
+
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         user.resetOtp = otp;
         user.resetotpExpireAt = Date.now() + 24 * 60 * 60 * 1000; // 1 day
@@ -162,13 +163,14 @@ export const sendResetOtp = async (req, res) => {
             subject: 'Password Reset OTP',
             text: `Hello ${user.name},\n\nYour OTP for Password Reset is: ${otp}\nThis OTP is valid for 24 hours.\n\nBest regards,\nThe Team`
         };
+
         await transporter.sendMail(mailOptions);
         res.json({ success: true, message: 'OTP sent to the email' });
     } catch (error) {
-        res.json({ success: false, message: error.message });
+        console.error("sendResetOtp error:", error);  
+        res.status(500).json({ success: false, message: error.message });
     }
 }
-
 export const resetPassword = async (req, res) => {
     const { email, otp, newPassword } = req.body;
     if(!email || !otp || !newPassword) {
