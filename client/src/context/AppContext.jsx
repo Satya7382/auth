@@ -32,11 +32,9 @@ export const AppContextProvider = (props) => {
   };
   const getUserData = async () => {
     try {
-      const token = localStorage.getItem("token"); // get token from localStorage
+      const token = localStorage.getItem("token");
       const { data } = await axios.get(`${backend_Url}/api/user/data`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        withCredentials: true, 
       });
 
       if (data.success) {

@@ -2,7 +2,6 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import userModel from '../models/userModel.js';
 import transporter from '../config/nodemailer.js';
-//import { userAuth } from '../middleware/userAuth.js';
 export const register =  async (req, res) => {
     const { name, email, password } = req.body;
     if(!name || !email || !password) {
