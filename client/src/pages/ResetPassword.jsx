@@ -191,7 +191,7 @@ const ResetPassword = () => {
             type="submit"
             className="w-full py-2 mt-4 bg-purple-600 text-white rounded-full hover:bg-blue-700 transition"
           >
-            Send Reset Otp
+            Submit
           </button>
         </form>
       )}
