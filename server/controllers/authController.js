@@ -155,15 +155,12 @@ export const sendResetOtp = async (req, res) => {
         user.resetOtp = otp;
         user.resetotpExpireAt = Date.now() + 24 * 60 * 60 * 1000; // 1 day
         await user.save();
-
-        const mailOptions = {
-            from: process.env.SENDER_EMAIL,
-            to: user.email,
-            subject: 'Password Reset OTP',
-            text: `Hello ${user.name},\n\nYour OTP for Password Reset is: ${otp}\nThis OTP is valid for 24 hours.\n\nBest regards,\nThe Team`
-        };
-
-        await transporter.sendMail(mailOptions);
+        await sendEmail(
+            user.email,
+            'Password Reset OTP',
+            `Hello ${user.name},\n\nYour OTP for Password Reset is: ${otp}\nThis OTP is valid for 24 hours.\n\nBest regards,\nThe Team`
+        );
+        
         res.json({ success: true, message: 'OTP sent to the email' });
     } catch (error) {
         console.error("sendResetOtp error:", error);
