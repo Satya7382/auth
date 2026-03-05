@@ -94,7 +94,7 @@ export const sendverifyOtp = async (req, res) => {
 
         await user.save();
         await sendEmail(
-            email,
+            user.email,
             'Account Verification OTP',
             `Hello ${user.name},\n\nYour OTP for account verification is: ${otp}\nThis OTP is valid for 24 hours.\n\nBest regards,\nThe Team`
         );
