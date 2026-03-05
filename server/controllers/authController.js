@@ -1,7 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import userModel from '../models/userModel.js';
-import transporter from '../config/nodemailer.js';
 import sendEmail from '../utils/sendEmail.js';
 export const register = async (req, res) => {
     const { name, email, password } = req.body;
@@ -34,7 +33,6 @@ export const register = async (req, res) => {
             Best regards,
             The Team`
         );
-        console.log("Step 4: Email sent");
         return res.json({ success: true, message: 'User registered successfully' });
     }
     catch (error) {
@@ -96,14 +94,11 @@ export const sendverifyOtp = async (req, res) => {
         user.verifyOtpExpireAt = Date.now() + 24 * 60 * 60 * 1000; // 1 day
 
         await user.save();
-
-        const mailOptions = {
-            from: process.env.SENDER_EMAIL,
-            to: user.email,
-            subject: 'Account Verification OTP',
-            text: `Hello ${user.name},\n\nYour OTP for account verification is: ${otp}\nThis OTP is valid for 24 hours.\n\nBest regards,\nThe Team`
-        };
-        await transporter.sendMail(mailOptions);
+        await sendEmail(
+            email,
+            'Account Verification OTP',
+            `Hello ${user.name},\n\nYour OTP for account verification is: ${otp}\nThis OTP is valid for 24 hours.\n\nBest regards,\nThe Team`
+        );
         res.json({ success: true, message: 'Verification OTP sent to the email' });
     }
     catch (error) {
