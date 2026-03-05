@@ -8,14 +8,16 @@ export const register =  async (req, res) => {
         return res.status(400).json({ success : false , message: 'All fields are required' });
     }
     try {
+        console.log("Step 1: Register API called");
         const existingUser = await userModel.findOne({ email });
+        console.log("Step 2: Checked existing user");
         if(existingUser) {
             return res.status(400).json({ success : false , message: 'User already exists' });
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = new userModel({ name, email, password: hashedPassword });
         await user.save();
-
+        console.log("Step 3: User saved");
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
         res.cookie('token', token, {
             httpOnly: true,
@@ -30,7 +32,8 @@ export const register =  async (req, res) => {
             subject: 'Welcome to Our Platform!',
             text: `Hello ${name},\n\nThank you for registering on our platform. We're excited to have you on board!\n\nBest regards,\nThe Team`  
         };
-        await transporter.sendMail(mailOptions);    
+        await transporter.sendMail(mailOptions); 
+        console.log("Step 4: Email sent");   
         return res.json({ success: true, message: 'User registered successfully' });
     }
     catch (error) {
